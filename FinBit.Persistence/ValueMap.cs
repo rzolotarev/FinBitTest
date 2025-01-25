@@ -11,7 +11,6 @@ namespace FinBit.Persistence
 
             Map(v => v.Code).ToColumn("Code");
 
-            // Identity
             Map(v => v.Id).ToColumn("Id");
         }
     }
