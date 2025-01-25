@@ -4,6 +4,7 @@ using FinBit.Services.Contracts.Models;
 using FinBitTest.Services.Contracts.Dtos;
 using Microsoft.Extensions.Options;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace FinBit.Persistence
 {
@@ -19,6 +20,7 @@ namespace FinBit.Persistence
         {
             var query = BuildCondition(filter, out DynamicParameters parameters);
 
+
             using (var db = new SqlConnection(_connectionString))
             {
                 await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
@@ -29,11 +31,15 @@ namespace FinBit.Persistence
 
         public async Task SaveAsync(IEnumerable<PersistenceValue> values, Log log)
         {
-            using (var db = new SqlConnection(_connectionString))
-            {                
-                await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
-                await db.ExecuteAsync("Delete from [Values]");
-                await db.ExecuteAsync("INSERT INTO [Values] VALUES (@Id, @Code, @Value)", values);
+            using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                using (var db = new SqlConnection(_connectionString))
+                {
+                    await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
+                    await db.ExecuteAsync("Delete from [Values]");
+                    await db.ExecuteAsync("INSERT INTO [Values] VALUES (@Id, @Code, @Value)", values);
+                }
+                transactionScope.Complete();
             }
         }
 
