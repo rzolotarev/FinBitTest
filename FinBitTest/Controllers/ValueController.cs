@@ -28,10 +28,9 @@ namespace FinBitTest.Controllers
         }
 
         [HttpPost]
-        public async Task SaveAsync([FromBody] string jsonValues)
+        public async Task SaveAsync([FromBody] ICollection<ClientValueDto> jsonValues)
         {
-            var values = JsonSerializer.Deserialize<ICollection<ValueDto>>(jsonValues);
-            await _valuesHandler.LogAsync(values.Select(v => new Services.Contracts.Dtos.ValueDto { Code = int.Parse(v.Code), Value = v.Value }), new Log { Query = $"{nameof(ValueController)}.{nameof(SaveAsync)}", Payload = jsonValues });
+            await _valuesHandler.LogAsync(jsonValues.Select(v => new Services.Contracts.Dtos.ValueDto { Code = int.Parse(v.Code), Value = v.Value }), new Log { Query = $"{nameof(ValueController)}.{nameof(SaveAsync)}", Payload = "" });
         }
     }
 }

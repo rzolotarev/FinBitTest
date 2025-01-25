@@ -1,6 +1,8 @@
-﻿namespace FinBitTest.Controllers.Dtos
+﻿using System.Text.Json.Serialization;
+
+namespace FinBitTest.Controllers.Dtos
 {
-    public class ValueDto
+    public class ClientValueDto
     {
         public string Code { get; set; }
 

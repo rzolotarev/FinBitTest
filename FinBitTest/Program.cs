@@ -2,6 +2,7 @@ using Dapper.FluentMap;
 using FinBit.Persistence;
 using FinBit.Services;
 using FinBit.Services.Contracts;
+using FinBitTest.Controllers.Dtos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+     .AddJsonOptions(configure =>
+     {
+         configure.JsonSerializerOptions.Converters.Add(new ValueDtoConteverter());
+     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

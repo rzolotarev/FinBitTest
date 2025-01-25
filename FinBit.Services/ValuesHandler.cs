@@ -15,7 +15,8 @@ namespace FinBit.Services
 
         public async Task LogAsync(IEnumerable<ValueDto> values, Log log)
         {
-            await _valueRepository.SaveAsync(values.Select(v => new PersistenceValue { Code = v.Code, Value = v.Value }).OrderBy(v => v.Code).ToArray(), log);
+
+            await _valueRepository.SaveAsync(values.OrderBy(v => v.Code).Select((v, i) => new PersistenceValue { Code = v.Code, Value = v.Value, Id = i }).ToArray(), log);
         }
 
         public async Task<IEnumerable<ValueDto>> FetchAsync(ValueFilter filter, Log log)

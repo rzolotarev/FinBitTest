@@ -21,8 +21,8 @@ namespace FinBit.Persistence
 
             using (var db = new SqlConnection(_connectionString))
             {
-                await db.ExecuteAsync("INSERT INTO Logs VALUES (@Query, @Payload)", log);
-                var values = await db.QueryAsync<PersistenceValue>($"SELECT * TOP 1000 FROM Values {query}", filter);
+                await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
+                var values = await db.QueryAsync<PersistenceValue>($"SELECT Id, Code, Value FROM [Values] {query}", filter);
                 return values.Select(v => new ValueDto() { Id = v.Id, Code = v.Code, Value = v.Value }).ToArray();
             }
         }
@@ -30,10 +30,10 @@ namespace FinBit.Persistence
         public async Task SaveAsync(IEnumerable<PersistenceValue> values, Log log)
         {
             using (var db = new SqlConnection(_connectionString))
-            {
-                await db.ExecuteAsync("Delete from Values");
-                await db.ExecuteAsync("INSERT INTO Logs VALUES (@Query, @Payload)", log);
-                await db.ExecuteAsync("INSERT INTO Values VALUES (@Code, @Value)", values);
+            {                
+                await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
+                await db.ExecuteAsync("Delete from [Values]");
+                await db.ExecuteAsync("INSERT INTO [Values] VALUES (@Id, @Code, @Value)", values);
             }
         }
 
@@ -49,7 +49,7 @@ namespace FinBit.Persistence
                 parameters.Add("@Code", filter.Code);
             }
 
-            if (string.IsNullOrWhiteSpace(filter.Value?.Trim()))
+            if (!string.IsNullOrWhiteSpace(filter.Value?.Trim()))
             {
                 filterCollection.Add("Value = @Value");
                 parameters.Add("@Value", filter.Value);
