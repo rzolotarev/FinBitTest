@@ -11,5 +11,8 @@ namespace FinBit.Services.Contracts
         public int Id { get; set; }
         public string Query { get; set; }
         public string Payload { get; set; }
+
+        // index in db
+        public DateTime DateTime { get; set; }
     }
 }

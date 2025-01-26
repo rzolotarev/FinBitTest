@@ -24,13 +24,14 @@ namespace FinBitTest.Controllers
         [HttpGet]
         public async Task<IEnumerable<Services.Contracts.Dtos.ValueDto>> GetAsync([FromQuery] ValueFilter filter)
         {
-            return await _valuesHandler.FetchAsync(filter, new Log { Query = $"{nameof(ValueController)}.{nameof(GetAsync)}", Payload = filter.ToString() });
+            return await _valuesHandler.FetchAsync(filter, new Log { Query = $"{nameof(ValueController)}.{nameof(GetAsync)}", Payload = filter.ToString(), DateTime = DateTime.UtcNow });
         }
 
         [HttpPost]
         public async Task SaveAsync([FromBody] ICollection<ClientValueDto> jsonValues)
         {
-            await _valuesHandler.LogAsync(jsonValues.Select(v => new Services.Contracts.Dtos.ValueDto { Code = int.Parse(v.Code), Value = v.Value }), new Log { Query = $"{nameof(ValueController)}.{nameof(SaveAsync)}", Payload = "" });
+            await _valuesHandler.LogAsync(jsonValues.Select(v => new Services.Contracts.Dtos.ValueDto { Code = int.Parse(v.Code), Value = v.Value }),
+                                          new Log { Query = $"{nameof(ValueController)}.{nameof(SaveAsync)}", Payload = string.Join(",", jsonValues.Select(v => $"{v.Code}:{v.Value}")), DateTime = DateTime.UtcNow });
         }
     }
 }
