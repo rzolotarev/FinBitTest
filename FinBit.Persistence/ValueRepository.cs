@@ -23,7 +23,7 @@ namespace FinBit.Persistence
 
             using (var db = new SqlConnection(_connectionString))
             {
-                await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
+                await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload, @DateTime)", log);
                 var values = await db.QueryAsync<PersistenceValue>($"SELECT Id, Code, Value FROM [Values] {query}", filter);
                 return values.Select(v => new ValueDto() { Id = v.Id, Code = v.Code, Value = v.Value }).ToArray();
             }
@@ -35,7 +35,7 @@ namespace FinBit.Persistence
             {
                 using (var db = new SqlConnection(_connectionString))
                 {
-                    await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload)", log);
+                    await db.ExecuteAsync("INSERT INTO Loggs VALUES (@Query, @Payload, @DateTime)", log);
                     await db.ExecuteAsync("Delete from [Values]");
                     await db.ExecuteAsync("INSERT INTO [Values] VALUES (@Id, @Code, @Value)", values);
                 }
